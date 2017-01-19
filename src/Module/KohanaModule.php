@@ -69,7 +69,7 @@ class KohanaModule extends Framework implements ActiveRecord, PartedModule {
 	public function _before(TestInterface $test)
 	{
 		$this->client = new KohanaConnector;
-		$this->client->setIndex('public/index.php');
+		$this->client->setIndex('../public/index.php');
 	}
 
 	/**

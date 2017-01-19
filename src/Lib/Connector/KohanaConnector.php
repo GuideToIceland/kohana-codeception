@@ -25,7 +25,9 @@ class KohanaConnector extends Client {
 		$_SERVER = $request->getServer();
 		$_FILES  = $request->getFiles();
 
-		$uri = str_replace('http://localhost', '', $request->getUri());
+		$uri = ($_SERVER['HTTPS'] === TRUE) ? 'https://' : 'http://';
+		$uri .= $_SERVER['HTTP_HOST'];
+		$uri = str_replace($uri, '', $request->getUri());
 
 		$_SERVER['KOHANA_ENV'] = 'TESTING';
 		$_SERVER['REQUEST_METHOD'] = strtoupper($request->getMethod());
@@ -50,7 +52,7 @@ class KohanaConnector extends Client {
 		$kohanaRequest::$initial = $kohanaRequest;
 		$content = $kohanaRequest->execute()->render();
 
-		$headers = (array) $kohanaRequest->response()->headers();
+		$headers = (array) $kohanaRequest->headers();
 		$headers['Content-Type'] = "text/html; charset=UTF-8";
 		$response = new Response($content, 200, $headers);
 		return $response;
