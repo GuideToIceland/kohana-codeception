@@ -18,6 +18,9 @@ class KohanaConnector extends Client {
 	 * @param SymfonyRequest $request
 	 *
 	 * @return Response
+	 *
+	 * @author Thoi
+	 * @modified Andri Thorlacius <andri.thorlacius@gmail.com>
 	 */
 	protected function doRequest($request)
 	{
