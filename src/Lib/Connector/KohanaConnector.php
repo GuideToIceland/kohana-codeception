@@ -21,8 +21,8 @@ class KohanaConnector extends Client {
 	 */
 	protected function doRequest($request)
 	{
-		try{
-
+		try
+		{
 			$_COOKIE = $request->getCookies();
 			$_SERVER = $request->getServer();
 			$_FILES  = $request->getFiles();
@@ -52,15 +52,13 @@ class KohanaConnector extends Client {
 			$kohanaRequest->cookie($_COOKIE);
 
 			$kohanaRequest::$initial = $kohanaRequest;
+
 			$executedRequest = $kohanaRequest->execute();
 			$content = $executedRequest->render();
 
-			$headers = (array) $kohanaRequest->headers();
-			$headers['Content-Type'] = "text/html; charset=UTF-8";
-			$response = new Response($content, $executedRequest->status(), (array)$executedRequest->headers());
-			return $response;
+			$response = new Response($content, $executedRequest->status(), (array) $executedRequest->headers());
 		}
-		catch(Exception $e)
+		catch (Exception $e)
 		{
 			$response = new Response($e->getMessage(), 500, []);
 		}
