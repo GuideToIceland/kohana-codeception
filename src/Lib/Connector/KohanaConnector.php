@@ -18,43 +18,53 @@ class KohanaConnector extends Client {
 	 * @param SymfonyRequest $request
 	 *
 	 * @return Response
+	 *
+	 * @author Thoi
+	 * @modified Andri Thorlacius <andri.thorlacius@gmail.com>
 	 */
 	protected function doRequest($request)
 	{
-		$_COOKIE = $request->getCookies();
-		$_SERVER = $request->getServer();
-		$_FILES  = $request->getFiles();
-
-		$uri = ($_SERVER['HTTPS'] === TRUE) ? 'https://' : 'http://';
-		$uri .= $_SERVER['HTTP_HOST'];
-		$uri = str_replace($uri, '', $request->getUri());
-
-		$_SERVER['KOHANA_ENV'] = 'TESTING';
-		$_SERVER['REQUEST_METHOD'] = strtoupper($request->getMethod());
-		$_SERVER['REQUEST_URI'] = strtoupper($uri);
-
-		$this->_initRequest();
-
-		$kohanaRequest = \Request::factory($uri);
-		$kohanaRequest->method($_SERVER['REQUEST_METHOD']);
-
-		if (strtoupper($request->getMethod()) == 'GET')
+		try
 		{
-			$kohanaRequest->query($request->getParameters());
+			$_COOKIE = $request->getCookies();
+			$_SERVER = $request->getServer();
+			$_FILES  = $request->getFiles();
+
+			$uri = ($_SERVER['HTTPS'] === TRUE) ? 'https://' : 'http://';
+			$uri .= $_SERVER['HTTP_HOST'];
+			$uri = str_replace($uri, '', $request->getUri());
+
+			$_SERVER['KOHANA_ENV'] = 'TESTING';
+			$_SERVER['REQUEST_METHOD'] = strtoupper($request->getMethod());
+			$_SERVER['REQUEST_URI'] = strtoupper($uri);
+
+			$this->_initRequest();
+
+			$kohanaRequest = \Request::factory($uri);
+			$kohanaRequest->method($_SERVER['REQUEST_METHOD']);
+
+			if (strtoupper($request->getMethod()) == 'GET')
+			{
+				$kohanaRequest->query($request->getParameters());
+			}
+			if (strtoupper($request->getMethod()) == 'POST')
+			{
+				$kohanaRequest->post($request->getParameters());
+			}
+
+			$kohanaRequest->cookie($_COOKIE);
+
+			$kohanaRequest::$initial = $kohanaRequest;
+
+			$executedRequest = $kohanaRequest->execute();
+			$content = $executedRequest->render();
+
+			$response = new Response($content, $executedRequest->status(), (array) $executedRequest->headers());
 		}
-		if (strtoupper($request->getMethod()) == 'POST')
+		catch (Exception $e)
 		{
-			$kohanaRequest->post($request->getParameters());
+			$response = new Response($e->getMessage(), 500, []);
 		}
-
-		$kohanaRequest->cookie($_COOKIE);
-
-		$kohanaRequest::$initial = $kohanaRequest;
-		$content = $kohanaRequest->execute()->render();
-
-		$headers = (array) $kohanaRequest->headers();
-		$headers['Content-Type'] = "text/html; charset=UTF-8";
-		$response = new Response($content, 200, $headers);
 		return $response;
 	}
 
