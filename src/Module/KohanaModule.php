@@ -96,6 +96,26 @@ class KohanaModule extends Framework implements ActiveRecord, PartedModule {
 		fwrite(STDERR, print_r($var, TRUE));
 	}
 
+	/**
+	 * Assert that the response has a given header
+	 *
+	 * @param  string $header The header to check for
+	 * @param  string $value  (optional) the value of the header to assert
+	 *
+	 * @author Andri Thorlacius <andri.thorlacius@gmail.com>
+	 */
+    public function seeHeader($header, $value = NULL)
+    {
+        $headers = $this->getActiveClient()->getInternalResponse()->getHeaders();
+
+        $this->assertArrayHasKey($header, $headers);
+
+        if ($value !== NULL)
+        {
+        	$this->assertEquals($headers[$header], $value);
+        }
+    }
+
 	public function haveRecord($model, $attributes = [])
 	{
 		// TODO: Implement haveRecord() method.
@@ -115,5 +135,25 @@ class KohanaModule extends Framework implements ActiveRecord, PartedModule {
 	public function grabRecord($model, $attributes = [])
 	{
 		// TODO: Implement grabRecord() method.
+	}
+
+	/**
+	 * Fetch the active connector from the parent
+	 *
+	 * @note This is a hack as the parent has declared the function
+	 *       to be private
+	 *
+	 * @return Symfony\Component\BrowserKit\Client The active client
+	 *
+	 * @author Andri Thorlacius <andri.thorlacius@gmail.com>
+	 */
+	protected function getActiveClient()
+	{
+
+		$method = new \ReflectionMethod($this, 'getRunningClient');
+		$method->setAccessible(TRUE);
+
+		return $method->invoke($this);
+
 	}
 }
