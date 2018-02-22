@@ -96,6 +96,18 @@ class KohanaModule extends Framework implements ActiveRecord, PartedModule {
 		fwrite(STDERR, print_r($var, TRUE));
 	}
 
+    public function seeHeader($header, $value = null)
+    {
+        $headers = $this->getActiveClient()->getInternalResponse()->getHeaders();
+
+        $this->assertArrayHasKey($header, $headers);
+
+        if($value !== null)
+        {
+        	$this->assertEquals($headers[$header], $value);
+        }
+    }
+
 	public function haveRecord($model, $attributes = [])
 	{
 		// TODO: Implement haveRecord() method.
@@ -115,5 +127,15 @@ class KohanaModule extends Framework implements ActiveRecord, PartedModule {
 	public function grabRecord($model, $attributes = [])
 	{
 		// TODO: Implement grabRecord() method.
+	}
+
+	protected function getActiveClient()
+	{
+
+		$method = new \ReflectionMethod($this, 'getRunningClient');
+		$method->setAccessible(true);
+
+		return $method->invoke($this);
+
 	}
 }
