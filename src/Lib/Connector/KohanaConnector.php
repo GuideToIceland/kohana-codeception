@@ -61,8 +61,14 @@ class KohanaConnector extends Client {
 
 			$response = new Response($content, $executedRequest->status(), (array) $executedRequest->headers());
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
+			print(json_encode([
+				"error" => $e->getMessage(),
+				"code" => $e->getCode(),
+				"line" => $e->getLine(),
+				"file" => $e->getFile(),
+			], JSON_PRETTY_PRINT) . PHP_EOL);
 			$response = new Response($e->getMessage(), 500, []);
 		}
 		return $response;
