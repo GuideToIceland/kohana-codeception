@@ -96,13 +96,13 @@ class KohanaModule extends Framework implements ActiveRecord, PartedModule {
 		fwrite(STDERR, print_r($var, TRUE));
 	}
 
-    public function seeHeader($header, $value = null)
+    public function seeHeader($header, $value = NULL)
     {
         $headers = $this->getActiveClient()->getInternalResponse()->getHeaders();
 
         $this->assertArrayHasKey($header, $headers);
 
-        if($value !== null)
+        if ($value !== NULL)
         {
         	$this->assertEquals($headers[$header], $value);
         }
@@ -133,7 +133,7 @@ class KohanaModule extends Framework implements ActiveRecord, PartedModule {
 	{
 
 		$method = new \ReflectionMethod($this, 'getRunningClient');
-		$method->setAccessible(true);
+		$method->setAccessible(TRUE);
 
 		return $method->invoke($this);
 
