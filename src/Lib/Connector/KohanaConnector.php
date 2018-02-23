@@ -47,9 +47,17 @@ class KohanaConnector extends Client {
 			{
 				$kohanaRequest->query($request->getParameters());
 			}
+
 			if (strtoupper($request->getMethod()) == 'POST')
 			{
-				$kohanaRequest->post($request->getParameters());
+				if ($request->getContent() !== NULL)
+				{
+					$kohanaRequest->body($request->getContent());
+				}
+				else
+				{
+					$kohanaRequest->post($request->getParameters());
+				}
 			}
 
 			$kohanaRequest->cookie($_COOKIE);
