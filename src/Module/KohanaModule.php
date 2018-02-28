@@ -117,7 +117,7 @@ class KohanaModule extends Framework implements ActiveRecord, PartedModule {
     }
 
 	/**
-	 * 
+	 * Assert that the response does not have a given header or value is not a given value
 	 *
 	 * @param  string $header The header to check for
 	 *
