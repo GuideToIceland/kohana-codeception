@@ -116,6 +116,27 @@ class KohanaModule extends Framework implements ActiveRecord, PartedModule {
         }
     }
 
+	/**
+	 * 
+	 *
+	 * @param  string $header The header to check for
+	 *
+	 * @author Dagur Kristinsson
+	 */
+	public function dontSeeHeader($header, $value = NULL)
+	{
+		$headers = $this->getActiveClient()->getInternalResponse()->getHeaders();
+		
+		if ($value !== NULL AND array_key_exists($header, $headers))
+		{
+			$this->assertNotEquals($headers[$header], $value);
+		}
+		else
+		{
+			$this->assertArrayNotHasKey($header, $headers);
+		}
+	}
+
 	public function haveRecord($model, $attributes = [])
 	{
 		// TODO: Implement haveRecord() method.
